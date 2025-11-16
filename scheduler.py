@@ -4,6 +4,9 @@ from aiogram import Bot
 from database import db
 from config import ADMIN_IDS
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 class ReportScheduler:
     def __init__(self, bot: Bot):
@@ -49,7 +52,30 @@ class ReportScheduler:
             try:
                 await self.bot.send_message(admin_id, message)
             except Exception as e:
-                print(f"Помилка відправки адміністратору {admin_id}: {e}")
+                logger.error(f"Помилка відправки адміністратору {admin_id}: {e}")
+    
+    async def clear_daily_data(self):
+        """Щоденне очищення даних про відкриття"""
+        try:
+            # Отримуємо вчорашню дату
+            yesterday = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            
+            # Видаляємо старі записи (можна змінити на певну кількість днів)
+            cursor = db.conn.cursor()
+            cursor.execute('DELETE FROM store_openings WHERE DATE(open_time) = ?', (yesterday,))
+            db.conn.commit()
+            
+            logger.info(f"✅ Дані за {yesterday} очищено")
+            
+            # Сповіщення адмінів
+            for admin_id in ADMIN_IDS:
+                try:
+                    await self.bot.send_message(admin_id, f"🔄 Дані за {yesterday} автоматично очищено. Початок нового робочого дня!")
+                except Exception as e:
+                    logger.error(f"Помилка сповіщення адміністратора {admin_id}: {e}")
+                    
+        except Exception as e:
+            logger.error(f"Помилка очищення даних: {e}")
     
     def start_scheduler(self):
         """Запуск планувальника"""
@@ -69,8 +95,15 @@ class ReportScheduler:
             id="second_report"
         )
         
+        # Очищення даних о 00:01
+        self.scheduler.add_job(
+            self.clear_daily_data,
+            trigger=CronTrigger(hour=0, minute=1),
+            id="clear_data"
+        )
+        
         self.scheduler.start()
-        print("🕒 Планувальник звітів запущено")
+        logger.info("🕒 Планувальник звітів запущено")
 
     def stop_scheduler(self):
         """Зупинка планувальника"""
