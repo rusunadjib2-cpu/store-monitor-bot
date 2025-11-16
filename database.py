@@ -159,7 +159,9 @@ class Database:
         self.conn.commit()
     
     def is_admin(self, user_id: int) -> bool:
-        """Перевірка, чи є користувач адміністратором"""
         cursor = self.conn.cursor()
         cursor.execute('SELECT user_id FROM admins WHERE user_id = ?', (user_id,))
         return cursor.fetchone() is not None
+
+# Глобальний об'єкт бази даних
+db = Database()
