@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 
 # Налаштування
-BOT_TOKEN = "ВАШ_ТОКЕН_ТУТ"  # Замініть на реальний токен
+BOT_TOKEN = "8543789016:AAGxz8IRWvgY4TPnQNpfd4jfCW6ZYljLG3M"
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
