@@ -132,3 +132,17 @@ async def cmd_help(message: types.Message):
 🕒 8:00 - фінальний звіт про невідкриті магазини
     """
     await message.answer(help_text)
+@router.message(F.text == "↩️ На головну")
+async def back_to_main_menu(message: types.Message):
+    """Повернення в головне меню"""
+    user_id = message.from_user.id
+    is_admin = db.is_admin(user_id)
+    
+    # Очищаємо стан користувача
+    if user_id in user_states:
+        del user_states[user_id]
+    
+    await message.answer(
+        "Головне меню:",
+        reply_markup=main_menu_for_selection(is_admin)
+    )
