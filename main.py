@@ -32,7 +32,23 @@ async def main():
     finally:
         scheduler.stop_scheduler()
         await bot.session.close()
+import os
 
+# Автоматичний імпорт даних при запуску
+if os.getenv("IMPORT_DATA") or not db.get_all_stores():
+    from import_data import import_from_excel
+    import_from_excel("stores_data.xlsx")
+    print("✅ Дані магазинів імпортовано!")
 if __name__ == "__main__":
+    asyncio.run(main())
+import os
+
+# Автоматичний імпорт даних при запуску
+if os.getenv("IMPORT_DATA") or not db.get_all_stores():
+    from import_data import import_from_excel
+    import_from_excel("stores_data.xlsx")
+    print("✅ Дані магазинів імпортовано!")
+
+if name == "__main__":
     asyncio.run(main())
 
