@@ -1,10 +1,12 @@
 import asyncio
 import logging
+import os
 from aiogram import Bot, Dispatcher
 from config import BOT_TOKEN
 from handlers.start import router as start_router
 from handlers.store_actions import router as store_router
 from scheduler import ReportScheduler
+from database import db
 
 # Налаштування логування
 logging.basicConfig(level=logging.INFO)
@@ -32,16 +34,6 @@ async def main():
     finally:
         scheduler.stop_scheduler()
         await bot.session.close()
-import os
-
-# Автоматичний імпорт даних при запуску
-if os.getenv("IMPORT_DATA") or not db.get_all_stores():
-    from import_data import import_from_excel
-    import_from_excel("stores_data.xlsx")
-    print("✅ Дані магазинів імпортовано!")
-if __name__ == "__main__":
-    asyncio.run(main())
-import os
 
 # Автоматичний імпорт даних при запуску
 if os.getenv("IMPORT_DATA") or not db.get_all_stores():
@@ -51,4 +43,3 @@ if os.getenv("IMPORT_DATA") or not db.get_all_stores():
 
 if name == "__main__":
     asyncio.run(main())
-
