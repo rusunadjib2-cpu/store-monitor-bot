@@ -48,5 +48,6 @@ def import_from_excel(file_path: str):
     except Exception as e:
         print(f"❌ Помилка імпорту: {e}")
 
-if name == "__main__":
+if __name__ == "__main__":
     import_from_excel("stores_data.xlsx")
+
