@@ -200,3 +200,31 @@ async def show_store_info(message: types.Message):
     
     is_admin = db.is_admin(user_id)
     await message.answer(store_info, reply_markup=main_menu_for_store(store, is_admin))
+from aiogram.filters import Command
+
+@router.message(Command("status"))
+async def show_public_status(message: types.Message):
+    """Публічний статус для всіх користувачів"""
+    all_stores = db.get_all_stores()
+    opened_stores = db.get_today_opened_stores()
+    
+    if not all_stores:
+        await message.answer("❌ Інформація тимчасово недоступна")
+        return
+    
+    opened_count = len(opened_stores)
+    total_count = len(all_stores)
+    
+    response = f"""
+📊 СТАТУС МАГАЗИНІВ 
+на {message.date.strftime('%d.%m.%Y %H:%M')}
+
+✅ Відкрито: {opened_count}/{total_count}
+❌ Не відкрито: {total_count - opened_count}/{total_count}
+
+📈 Прогрес: {round((opened_count/total_count)*100)}%
+    
+ℹ️ Статус оновлюється в реальному часі
+    """
+    
+    await message.answer(response)
