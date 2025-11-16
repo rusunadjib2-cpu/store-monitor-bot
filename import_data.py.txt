@@ -1,0 +1,56 @@
+import pandas as pd
+from database import db
+
+def import_from_excel(file_path: str):
+    """
+    Імпорт даних з Excel файлу
+    Колонки:
+    A - store_id (номер магазину)
+    B - address_main (основна адреса) 
+    C - address_additional (додаткова адреса)
+    D - schedule (графік роботи)
+    E - phone (робочий номер) - ОСНОВНА КОЛОНКА ДЛЯ ІДЕНТИФІКАЦІЇ
+    """
+    try:
+        # Читаємо Excel файлу
+        df = pd.read_excel(file_path)
+        
+        print(f"Знайдено колонки: {df.columns.tolist()}")
+        print(f"Кількість рядків: {len(df)}")
+        
+        imported_count = 0
+        error_count = 0
+        
+        # Імпортуємо дані
+        for index, row in df.iterrows():
+            try:
+                store_id = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""  # Колонка A
+                address_main = str(row.iloc[1]).strip() if pd.notna(row.iloc[1]) else ""  # Колонка B
+                address_additional = str(row.iloc[2]).strip() if len(row) > 2 and pd.notna(row.iloc[2]) else ""  # Колонка C
+                schedule = str(row.iloc[3]).strip() if pd.notna(row.iloc[3]) else ""  # Колонка D
+                phone = str(row.iloc[4]).strip() if len(row) > 4 and pd.notna(row.iloc[4]) else ""  # Колонка E
+                
+                # Перевіряємо обов'язкові поля
+                if store_id and store_id != 'nan' and phone and phone != 'nan':
+                    db.add_store(store_id, phone, address_main, address_additional, schedule)
+                    print(f"✅ Додано магазин: {store_id} - {phone} - {address_main}")
+                    imported_count += 1
+                else:
+                    print(f"❌ Пропущено рядок {index+1}: відсутній store_id або phone")
+                    error_count += 1
+                    
+            except Exception as e:
+                print(f"❌ Помилка в рядку {index+1}: {e}")
+                error_count += 1
+        
+        print(f"\n📊 Підсумок імпорту:")
+        print(f"✅ Успішно імпортовано: {imported_count}")
+        print(f"❌ Помилок: {error_count}")
+        print(f"📋 Загалом рядків: {len(df)}")
+        
+    except Exception as e:
+        print(f"❌ Помилка імпорту: {e}")
+
+if name == "__main__":
+    # Запустіть цей скрипт для імпорту даних
+    import_from_excel("stores_data.xlsx")
