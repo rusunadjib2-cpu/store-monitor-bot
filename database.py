@@ -113,7 +113,7 @@ class Database:
         ''', (store_id,))
         row = cursor.fetchone()
         if row:
-return dict(zip(['store_id', 'phone', 'address_main', 'address_additional', 'schedule'], row))
+            return dict(zip(['store_id', 'phone', 'address_main', 'address_additional', 'schedule'], row))
         return None
     
     # Методи для відкриттів
