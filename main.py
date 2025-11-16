@@ -33,5 +33,6 @@ async def main():
         scheduler.stop_scheduler()
         await bot.session.close()
 
-if name == "__main__":
+if __name__ == "__main__":
     asyncio.run(main())
+
