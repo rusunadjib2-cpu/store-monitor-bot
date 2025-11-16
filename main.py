@@ -41,5 +41,6 @@ if os.getenv("IMPORT_DATA") or not db.get_all_stores():
     import_from_excel("stores_data.xlsx")
     print("✅ Дані магазинів імпортовано!")
 
-if name == "__main__":
+if __name__ == "__main__":
     asyncio.run(main())
+
