@@ -53,3 +53,9 @@ def cancel_keyboard():
         keyboard=[[KeyboardButton(text="↩️ Скасувати")]],
         resize_keyboard=True
     )
+def back_to_main_keyboard():
+    """Клавіатура з кнопкою На головну"""
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="↩️ На головну")]],
+        resize_keyboard=True
+    )
