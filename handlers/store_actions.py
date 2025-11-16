@@ -120,7 +120,7 @@ async def mark_store_opened(message: types.Message):
     # Перевіряємо, чи має користувач обраний магазин
     if user_id not in user_states:
         is_admin = db.is_admin(user_id)
-await message.answer(
+        await message.answer(
             "❌ Спочатку оберіть ваш магазин",
             reply_markup=main_menu_for_selection(is_admin)
         )
