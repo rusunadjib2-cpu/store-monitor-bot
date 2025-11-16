@@ -4,9 +4,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 
 # Налаштування
-BOT_TOKEN = "8543789016:AAGxz8IRWvgY4TPnQNpfd4jfCW6ZYljLG3M"
-
-# Ініціалізація
+BOT_TOKEN = "ВАШ_ТОКЕН_ТУТ"  # Замініть на реальний токен
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
@@ -14,20 +12,20 @@ dp = Dispatcher()
 async def cmd_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=[
-            [types.KeyboardButton(text="📱 Надіслати номер", request_contact=True)],
-            [types.KeyboardButton(text=ℹ️ Допомога")]
+            [types.KeyboardButton(text="Перевірити статус")],
+            [types.KeyboardButton(text="Допомога")]
         ],
         resize_keyboard=True
     )
-    await message.answer("🤖 Бот запущений! Натисніть кнопку нижче.", reply_markup=keyboard)
+    await message.answer("Вітаю! Оберіть опцію:", reply_markup=keyboard)
 
 @dp.message(Command("help"))
 async def cmd_help(message: types.Message):
-    await message.answer("ℹ️ Це тестовий бот для моніторингу магазинів")
+    await message.answer("Це бот для моніторингу магазинів. Використовуйте кнопки для навігації.")
 
 async def main():
     logging.basicConfig(level=logging.INFO)
-    print("🤖 Бот запущено!")
+    print("Бот запущено!")
     await dp.start_polling(bot)
 
 if name == "__main__":
