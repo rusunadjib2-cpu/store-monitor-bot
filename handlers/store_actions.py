@@ -1,21 +1,19 @@
 from aiogram import Router, types, F
+from aiogram.filters import Command
 from database import db
-from keyboards.main_menu import main_menu_for_store, main_menu_for_selection, stores_keyboard
+from keyboards.main_menu import main_menu_for_store, main_menu_for_selection, stores_keyboard, main_menu_default
 from handlers.start import user_states
 
 router = Router()
 
 @router.message(F.text == "📊 Статус всіх магазинів")
 async def show_all_stores_status(message: types.Message):
-    if not db.is_admin(message.from_user.id):
-        await message.answer("❌ Доступ заборонено. Ця функція тільки для адміністраторів.")
-        return
-    
+    """Статус магазинів для всіх користувачів"""
     all_stores = db.get_all_stores()
     opened_stores = db.get_today_opened_stores()
     
     if not all_stores:
-        await message.answer("❌ Магазини не знайдені в базі даних")
+        await message.answer("❌ Інформація тимчасово недоступна")
         return
     
     opened_count = len(opened_stores)
@@ -27,8 +25,10 @@ async def show_all_stores_status(message: types.Message):
 ✅ Відкрито: {opened_count}/{total_count}
 ❌ Не відкрито: {total_count - opened_count}/{total_count}
 
+📈 Прогрес: {round((opened_count/total_count)*100)}%
+
 Список магазинів:
-    """
+"""
     
     for store in all_stores:
         status = "✅" if store['store_id'] in opened_stores else "❌"
@@ -74,10 +74,10 @@ async def show_stores_for_selection(message: types.Message):
 
 @router.message(F.text.startswith("🏪"))
 async def handle_store_selection(message: types.Message):
-    """Обробка вибору магазину зі списку"""
+    """Обробка вибору магазину зі спику"""
     if message.text == "↩️ Скасувати":
         is_admin = db.is_admin(message.from_user.id)
-        await message.answer("Операцію скасовано", reply_markup=main_menu_for_selection(is_admin))
+        await message.answer("Операцію скасовано", reply_markup=main_menu_default(is_admin))
         return
     
     try:
@@ -122,7 +122,7 @@ async def mark_store_opened(message: types.Message):
         is_admin = db.is_admin(user_id)
         await message.answer(
             "❌ Спочатку оберіть ваш магазин",
-            reply_markup=main_menu_for_selection(is_admin)
+            reply_markup=main_menu_default(is_admin)
         )
         return
     
@@ -169,7 +169,7 @@ async def show_store_info(message: types.Message):
         is_admin = db.is_admin(user_id)
         await message.answer(
             "❌ Спочатку оберіть ваш магазин",
-            reply_markup=main_menu_for_selection(is_admin)
+            reply_markup=main_menu_default(is_admin)
         )
         return
     
@@ -200,7 +200,6 @@ async def show_store_info(message: types.Message):
     
     is_admin = db.is_admin(user_id)
     await message.answer(store_info, reply_markup=main_menu_for_store(store, is_admin))
-from aiogram.filters import Command
 
 @router.message(Command("status"))
 async def show_public_status(message: types.Message):
@@ -228,3 +227,18 @@ async def show_public_status(message: types.Message):
     """
     
     await message.answer(response)
+
+@router.message(F.text == "↩️ На головну")
+async def back_to_main_from_store(message: types.Message):
+    """Повернення на головну з меню магазину"""
+    user_id = message.from_user.id
+    
+    # Очищаємо стан користувача
+    if user_id in user_states:
+        del user_states[user_id]
+    
+    is_admin = db.is_admin(user_id)
+    await message.answer(
+        "Головне меню:",
+        reply_markup=main_menu_default(is_admin)
+    )
