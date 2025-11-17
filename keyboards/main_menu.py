@@ -5,19 +5,33 @@ def main_menu_for_store(store_info, is_admin: bool = False):
     keyboard = [
         [KeyboardButton(text="✅ Магазин відкритий")],
         [KeyboardButton(text="🏪 Інформація про магазин")],
+        [KeyboardButton(text="📊 Статус всіх магазинів")],
     ]
     
     if is_admin:
-        keyboard.append([KeyboardButton(text="📊 Статус всіх магазинів")])
         keyboard.append([KeyboardButton(text="📋 Список магазинів")])
     
-    keyboard.append([KeyboardButton(text="🔄 Змінити магазин")])
-    keyboard.append([KeyboardButton(text="ℹ️ Допомога")])
+    keyboard.append([KeyboardButton(text="↩️ На головну")])
     
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
 def main_menu_for_selection(is_admin: bool = False):
     """Меню для користувача без визначеного магазину"""
+    keyboard = [
+        [KeyboardButton(text="📱 Увійти з робочого номеру")],
+        [KeyboardButton(text="🏪 Обрати магазин вручну")],
+        [KeyboardButton(text="📊 Статус всіх магазинів")],
+    ]
+    
+    if is_admin:
+        keyboard.append([KeyboardButton(text="📋 Список магазинів")])
+    
+    keyboard.append([KeyboardButton(text="ℹ️ Допомога")])
+    
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+def main_menu_default(is_admin: bool = False):
+    """Головне меню для повернення"""
     keyboard = [
         [KeyboardButton(text="📱 Увійти з робочого номеру")],
         [KeyboardButton(text="🏪 Обрати магазин вручну")],
@@ -53,6 +67,7 @@ def cancel_keyboard():
         keyboard=[[KeyboardButton(text="↩️ Скасувати")]],
         resize_keyboard=True
     )
+
 def back_to_main_keyboard():
     """Клавіатура з кнопкою На головну"""
     return ReplyKeyboardMarkup(
