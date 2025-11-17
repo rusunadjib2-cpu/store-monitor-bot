@@ -43,4 +43,18 @@ if os.getenv("IMPORT_DATA") or not db.get_all_stores():
 
 if __name__ == "__main__":
     asyncio.run(main())
+def main_menu_default(is_admin: bool = False):
+    """Головне меню для повернення"""
+    keyboard = [
+        [KeyboardButton(text="📱 Увійти з робочого номеру")],
+        [KeyboardButton(text="🏪 Обрати магазин вручну")],
+    ]
+    
+    if is_admin:
+        keyboard.append([KeyboardButton(text="📊 Статус всіх магазинів")])
+        keyboard.append([KeyboardButton(text="📋 Список магазинів")])
+    
+    keyboard.append([KeyboardButton(text="ℹ️ Допомога")])
+    
+    return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
 
