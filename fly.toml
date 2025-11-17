@@ -1,7 +1,7 @@
 app = "store-monitor-bot"
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "Dockerfile.app"
 
 [[services]]
   internal_port = 8080
